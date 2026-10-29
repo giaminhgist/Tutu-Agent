@@ -1,0 +1,94 @@
+# Tutu skill map — single source of truth for which skills each agent preloads
+# (`skills:` frontmatter) and which it may borrow through the Skill tool.
+# Names are fully qualified `<plugin>:<skill>`; tests/test_skill_map.py checks
+# that agent files match this map and that every skill exists in the installed plugins.
+
+[orchestrator]
+preload = [
+  "superpowers:brainstorming",
+  "superpowers:writing-plans",
+  "superpowers:dispatching-parallel-agents",
+  "superpowers:verification-before-completion",
+  "aris:research-pipeline",
+  "supervisor-skills:vibe-research-workflow",
+]
+borrow = ["aris:render-html", "superpowers:executing-plans", "aris:research-refine-pipeline", "aris:research-wiki"]
+
+[research]
+preload = [
+  "supervisor-skills:deep-research",
+  "aris:research-lit",
+  "aris:arxiv",
+  "aris:semantic-scholar",
+  "aris:alphaxiv",
+  "aris:research-wiki",
+]
+borrow = ["aris:openalex", "aris:deepxiv", "aris:wiki-enrich", "aris:exa-search", "aris:keenable-search", "aris:novelty-check"]
+
+[methodology]
+preload = [
+  "aris:idea-discovery",
+  "aris:idea-creator",
+  "aris:novelty-check",
+  "supervisor-skills:idea-evaluator",
+  "aris:research-refine",
+  "aris:experiment-plan",
+]
+borrow = ["aris:ablation-planner", "aris:formula-derivation", "aris:proof-writer", "aris:research-refine-pipeline", "superpowers:brainstorming"]
+
+[coding]
+preload = [
+  "aris:research-implement-feature",
+  "superpowers:test-driven-development",
+  "superpowers:systematic-debugging",
+  "superpowers:using-git-worktrees",
+  "aris:web-debug-search",
+  "superpowers:verification-before-completion",
+]
+borrow = ["superpowers:receiving-code-review", "superpowers:finishing-a-development-branch", "aris:system-profile", "superpowers:executing-plans"]
+
+[experiment]
+preload = [
+  "aris:experiment-bridge",
+  "aris:run-experiment",
+  "aris:experiment-queue",
+  "aris:monitor-experiment",
+  "aris:training-check",
+  "aris:analyze-results",
+]
+borrow = ["aris:ablation-planner", "aris:paper-figure", "aris:system-profile", "aris:vast-gpu", "aris:serverless-modal", "superpowers:systematic-debugging"]
+
+[writing]
+preload = [
+  "supervisor-skills:paper-writer",
+  "aris:paper-writing",
+  "aris:paper-figure",
+  "supervisor-skills:figure-designer",
+  "supervisor-skills:paper-polish",
+  "humanizer:humanizer",
+]
+borrow = [
+  "supervisor-skills:intro-drafter", "supervisor-skills:tech-paper-template",
+  "supervisor-skills:benchmark-paper-template", "aris:grant-proposal", "aris:paper-plan",
+  "aris:paper-write", "aris:paper-compile", "aris:paper-slides", "aris:paper-poster-html",
+  "aris:rebuttal", "supervisor-skills:rebuttal-guidance", "aris:mermaid-diagram",
+  "aris:figure-spec", "supervisor-skills:drawio-reconstruction", "aris:overleaf-sync",
+]
+
+[reviewer]
+preload = [
+  "aris:research-review",
+  "aris:result-to-claim",
+  "aris:experiment-audit",
+  "aris:paper-claim-audit",
+  "aris:citation-audit",
+  "supervisor-skills:pre-submission-reviewer",
+]
+borrow = ["aris:kill-argument", "aris:citation-crosscheck", "superpowers:requesting-code-review", "aris:auto-review-loop", "aris:auto-paper-improvement-loop", "supervisor-skills:idea-evaluator"]
+
+# Installed but intentionally not mapped (outside this research profile; still callable manually):
+# patent-*, claims-drafting, embodiment-description, specification-writing, jurisdiction-format,
+# invention-structuring, prior-art-search, qzcli, feishu-notify, pixel-art, dse-loop,
+# lean-formalize, proof-orchestrator, proof-checker, comm-lit-review, idea-discovery-robot,
+# interview-cheatsheet, meta-optimize, meta-apply, writing-systems-papers,
+# auto-review-loop-minimax, auto-review-loop-llm, integrity-forensics.

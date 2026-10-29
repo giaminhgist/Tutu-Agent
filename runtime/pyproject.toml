@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tutu-runtime"
+version = "0.1.0"
+description = "Runtime for Tutu Agent: provenance, knowledge base, guardrails, budget and the Agent SDK runner."
+requires-python = ">=3.11"
+dependencies = []  # stdlib only, so hooks run on any Python 3.11+ (Linux and Windows)
+
+[project.optional-dependencies]
+sdk = ["claude-agent-sdk>=0.2"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+tutu = "tutu_runtime.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["tutu_runtime*"]

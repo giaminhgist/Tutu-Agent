@@ -1,0 +1,30 @@
+# Tutu project settings (created by /tutu:tutu-init). Values here override ~/.tutu/config.toml.
+
+[project]
+name = "{name}"
+domain = ["eye-tracking", "medical-imaging", "dementia", "computer-vision", "representation-learning"]
+target_venue = ""               # e.g. "MICCAI", "IEEE TMI", "ETRA"
+
+[data]
+# Raw / source data: agents may READ but never write, move or delete here.
+protected_paths = ["data/raw"]
+# "public" | "deidentified" | "phi" (protected health information).
+# With "phi", reading sensitive_paths needs an approval file in .tutu/approvals/.
+sensitivity = "deidentified"
+sensitive_paths = []
+
+[ethics]
+irb_protocol = ""               # protocol id / approval date
+data_use_agreement = ""
+
+[knowledge]
+# Allow this project's research-wiki notes to be promoted to the global library.
+kb_share = false
+
+[budget]
+# Uncomment to override global caps for this project.
+# max_usd_per_session = 5.0
+# max_gpu_hours_per_run = 2.0
+
+[reviewer]
+# backend = "codex"

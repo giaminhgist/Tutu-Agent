@@ -1,0 +1,40 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash   # Git Bash on Windows, same as Claude Code's Bash tool
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install pytest
+      - run: python -m pytest -q tests
+      - name: CLI smoke
+        run: |
+          export TUTU_HOME="$RUNNER_TEMP/tutu-home"
+          mkdir -p "$RUNNER_TEMP/proj" && cd "$RUNNER_TEMP/proj"
+          python -m pip install -e "$GITHUB_WORKSPACE/runtime"
+          tutu init --name ci-demo
+          tutu device
+          tutu provenance capture --name smoke --cmd "python -c 'print(1)'" --seed 0
+          tutu kb add-paper --title "Smoke paper" --author "A Tester" --year 2025 --keyword smoke --tldr "smoke test"
+          tutu kb search smoke --scope global
+          tutu run --goal "smoke" --dry-run
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code
+      - run: claude plugin validate .

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "tutu",
+  "owner": {
+    "name": "Tutu Agent maintainers"
+  },
+  "metadata": {
+    "description": "Tutu Agent and the four skill libraries it orchestrates."
+  },
+  "plugins": [
+    {
+      "name": "tutu",
+      "source": "./",
+      "description": "Tutu Agent: research orchestrator + 6 specialist subagents, hooks and runtime."
+    },
+    {
+      "name": "superpowers",
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers"
+      },
+      "description": "Core engineering skills: TDD, debugging, planning, verification, code review."
+    },
+    {
+      "name": "aris",
+      "source": {
+        "source": "github",
+        "repo": "wanshuiyin/auto-claude-code-research-in-sleep"
+      },
+      "description": "ARIS research workflow skills: literature, ideas, experiments, paper, review."
+    },
+    {
+      "name": "humanizer",
+      "source": {
+        "source": "github",
+        "repo": "blader/humanizer"
+      },
+      "description": "Remove AI tells from prose without changing meaning."
+    },
+    {
+      "name": "supervisor-skills",
+      "source": {
+        "source": "github",
+        "repo": "HKUSTDial/Supervisor-Skills"
+      },
+      "description": "HKUST Supervisor-Skills: deep research, idea evaluation, paper writing, figure design, pre-submission review.",
+      "strict": false
+    }
+  ]
+}

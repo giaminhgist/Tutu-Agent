@@ -1,0 +1,22 @@
+# Tutu global config. Copied to ~/.tutu/config.toml by install.py; edit that copy.
+# Project values in <project>/.tutu/project.toml override these.
+
+[budget]
+max_usd_per_session = 10.0      # SDK runner hard cap (claude-agent-sdk max_budget_usd)
+max_loop_iterations = 3         # Auto Research Loop rounds before stopping for a human
+max_parallel_subagents = 3      # orchestrator never dispatches more at once
+max_gpu_hours_per_run = 4.0     # guard asks for approval above this estimate
+max_turns = 200                 # SDK runner max agent turns
+
+[reviewer]
+# "claude" = fresh-context Claude reviewer (ARIS claude-review MCP + Tutu reviewer subagent)
+# "codex"  = cross-model Codex reviewer (run /aris:setup once on this machine)
+backend = "claude"
+
+[compute]
+device = "auto"                 # auto -> cuda > mps > cpu
+cloud_gpu_allowed = false       # vast.ai / Modal need explicit opt-in AND per-job approval
+
+[knowledge]
+# Global literature library shared by all projects (public papers only).
+root = "~/.tutu/knowledge"
