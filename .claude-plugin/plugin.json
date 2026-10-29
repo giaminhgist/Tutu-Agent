@@ -1,6 +1,6 @@
 {
   "name": "tutu",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tutu Agent — multi-agent research orchestrator (1 orchestrator + 6 specialists) for literature, ideas, experiments, coding, writing and independent review. Orchestrates superpowers, ARIS, Supervisor-Skills and humanizer skills with evidence-first, reproducible, human-in-the-loop guardrails.",
   "author": {
     "name": "Tutu Agent maintainers"

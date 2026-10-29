@@ -96,3 +96,13 @@ Each agent preloads about 6 core skills (see `config/skill-map.toml`). Any other
 - Commands must work in Linux bash and in Git Bash on Windows. Use Python for anything non-trivial, use forward-slash paths, and avoid `screen`, `jq` and GNU-only flags in Tutu's own steps.
 - Some ARIS skills (experiment-queue over SSH/screen) are Linux-only. On Windows, use aris:run-experiment locally.
 - ARIS helper scripts call `python3`. On Windows without `python3`, set `TUTU_PYTHON` and use `py -3` where needed.
+
+## 12. Scratch files and Python environments
+
+- Temporary scripts and intermediate files go only in `.tutu/artifacts/<task-id>/scratch/`. Delete them before your handoff unless they are a deliverable, and then list them under `artifacts`.
+- `.tutu/notes/` is for human-readable notes only.
+- The reviewer flags any leftover scratch files.
+- **Which Python to use:**
+  - `tutu-py` (the Tutu venv: numpy, scipy, pandas, matplotlib, seaborn, Pillow, python-pptx, pypdf, requests, pyyaml) runs ARIS helper scripts (`"$ARIS_REPO"/tools/*.py`) and analysis or figure scripts. When a skill says `python3 <ARIS helper>`, run it with `tutu-py` if `python3` lacks the needed libraries.
+  - **Experiment and training code** runs in the project's own environment (the conda env or venv on PATH, or `python:` in the project CLAUDE.md), never in `tutu-py`.
+- `tutu provenance capture` records the experiment environment by default, the python on PATH. Pass `--python <path>` to override it.

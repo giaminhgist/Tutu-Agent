@@ -13,5 +13,6 @@ Initialize Tutu in the current project:
    - `reviewer.backend` (claude | codex);
    - per-project budget overrides.
    Edit the file with their answers. Don't guess paths: look at the repo (e.g. `data/`, `raw/`, `*.dcm`, `*.edf`, `*.asc`, `*.tsv`) and propose them.
-3. Run `tutu doctor` and report any `!!` lines with their fix.
-4. Suggest adding `.tutu/kb.sqlite` to .gitignore (already in `.tutu/.gitignore`), and committing `.tutu/project.toml` and `.tutu/plans/` if the user wants a shared trail.
+3. `tutu init` adds a `## Local Environment` section (`gpu: local`, `python: python3`) to the project CLAUDE.md if there is no GPU section yet. ARIS experiment skills read it. Show the user that section, and change `python:` to their experiment env if it differs, and `gpu:` to `remote`/`vast`/`modal` with server details if they use one.
+4. Run `tutu doctor --skills` and report any `MISSING` lines with their fix.
+5. Suggest adding `.tutu/kb.sqlite` to .gitignore (already in `.tutu/.gitignore`), and committing `.tutu/project.toml` and `.tutu/plans/` if the user wants a shared trail.

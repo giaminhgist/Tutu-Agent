@@ -15,8 +15,25 @@ Requirements: [Claude Code](https://code.claude.com/docs), Python ≥ 3.11, and 
 ```bash
 git clone https://github.com/giaminhgist/Tutu-Agent.git
 cd Tutu-Agent
-python install.py                # Windows: py -3 install.py
+python install.py --with-latex --with-drawio --extras deepxiv-sdk exa-py wandb   # Windows: py -3 install.py ...
 ```
+
+The minimum is `python install.py`, which installs the plugins, ARIS wiring and the Tutu venv. The flags add system tools:
+
+| Flag | Installs | Needed by |
+|---|---|---|
+| (always) | `~/.tutu/venv`: numpy, scipy, pandas, matplotlib, seaborn, Pillow, python-pptx, pypdf, requests, pyyaml (`requirements-skills.txt`), run with `tutu-py` | ARIS helpers, aris:analyze-results, aris:paper-figure, aris:paper-slides |
+| `--with-latex` | TeX Live (latexmk, pdflatex, xelatex, biber) + screen/rsync on Linux; MiKTeX on Windows; MacTeX on macOS | aris:paper-compile, paper-writing, paper-slides, citation-audit |
+| `--with-drawio` | draw.io desktop (+ xvfb and a headless wrapper exported as `DRAWIO_PATH` on Linux) | supervisor-skills:drawio-reconstruction |
+| `--extras ...` | extra pip packages: `deepxiv-sdk` (aris:deepxiv), `exa-py` (aris:exa-search, needs `EXA_API_KEY`), `wandb` (aris:training-check) | |
+
+Check the installation at any time with `tutu doctor --skills --live`. It checks:
+- the skill count of each repo and that every SKILL.md is valid;
+- the files referenced by the mapped skills;
+- the ARIS helpers;
+- the Python libraries and system tools;
+- the API keys;
+- a live round-trip through the reviewer.
 
 `install.py` does the following:
 1. Adds this checkout as the `tutu` marketplace.
@@ -73,15 +90,19 @@ In headless mode every high-risk action is **denied automatically** and written 
             └── hooks: guard (HITL) · provenance nudge · session context ── runtime: provenance · KB · budget · trace ──┘
 ```
 
-| Agent | Preloaded skills (~6) | Commonly borrowed |
-|---|---|---|
-| **orchestrator** | superpowers: brainstorming, writing-plans, dispatching-parallel-agents, verification-before-completion · aris: research-pipeline · supervisor: vibe-research-workflow | aris: render-html, research-refine-pipeline |
-| **research** | supervisor: deep-research · aris: research-lit, arxiv, semantic-scholar, alphaxiv, research-wiki | openalex, deepxiv, exa-search, wiki-enrich |
-| **methodology** | aris: idea-discovery, idea-creator, novelty-check, research-refine, experiment-plan · supervisor: idea-evaluator | ablation-planner, formula-derivation |
-| **coding** | aris: research-implement-feature, web-debug-search · superpowers: TDD, systematic-debugging, git-worktrees, verification | receiving-code-review, system-profile |
-| **experiment** | aris: experiment-bridge, run-experiment, experiment-queue, monitor-experiment, training-check, analyze-results | paper-figure, ablation-planner, vast-gpu/modal (with approval) |
-| **writing** | supervisor: paper-writer, figure-designer, paper-polish · aris: paper-writing, paper-figure · humanizer | grant-proposal, rebuttal, paper-slides, paper-compile, intro-drafter |
-| **reviewer** | aris: research-review, result-to-claim, experiment-audit, paper-claim-audit, citation-audit · supervisor: pre-submission-reviewer | kill-argument, citation-crosscheck |
+| Agent | Model | Preloaded skills (~6) | Commonly borrowed |
+|---|---|---|---|
+| **orchestrator** | Opus 5.5 | superpowers: brainstorming, writing-plans, dispatching-parallel-agents, verification-before-completion · aris: research-pipeline · supervisor: vibe-research-workflow | aris: render-html, research-refine-pipeline |
+| **research** | Sonnet 5.5 | supervisor: deep-research · aris: research-lit, arxiv, semantic-scholar, alphaxiv, research-wiki | openalex, deepxiv, exa-search, wiki-enrich |
+| **methodology** | Opus 5.5 | aris: idea-discovery, idea-creator, novelty-check, research-refine, experiment-plan · supervisor: idea-evaluator | ablation-planner, formula-derivation |
+| **coding** | Sonnet 5.5 | aris: research-implement-feature, web-debug-search · superpowers: TDD, systematic-debugging, git-worktrees, verification | receiving-code-review, system-profile |
+| **experiment** | Opus 5.5 | aris: experiment-bridge, run-experiment, experiment-queue, monitor-experiment, training-check, analyze-results | paper-figure, ablation-planner, vast-gpu/modal (with approval) |
+| **writing** | Sonnet 5.5 | supervisor: paper-writer, figure-designer, paper-polish · aris: paper-writing, paper-figure · humanizer | grant-proposal, rebuttal, paper-slides, paper-compile, intro-drafter |
+| **reviewer** | Opus 5.5 | aris: research-review, result-to-claim, experiment-audit, paper-claim-audit, citation-audit · supervisor: pre-submission-reviewer | kill-argument, citation-crosscheck |
+
+Models are pinned in each agent's frontmatter (`claude-opus-5-5` / `claude-sonnet-5-5`), and `/tutu:tutu` runs the orchestrator on Opus. To change them, edit `config/skill-map.toml` and the matching agent file. Tests require the two to agree.
+
+**Independent reviewer.** ARIS review skills send the judgment to a **separate Claude process** through the `claude-review` MCP; the route comes from `<project>/.aris/reviewer.json`. Tutu writes and syncs that file in every Tutu project. In a project without it, ARIS defaults to Codex. Choose Codex for cross-model review with `reviewer.backend = "codex"` plus `/aris:setup`.
 
 The single source of truth is `config/skill-map.toml`. The test `tests/test_skill_map.py` checks that the agents match the map and that every skill exists.
 
@@ -131,12 +152,13 @@ Suggested features you can add later on the same skeleton:
 
 `tutu <cmd>` (on the Bash PATH while the plugin is enabled) or `python -m tutu_runtime <cmd>`:
 
-`setup` · `init` · `doctor` · `status` · `device` · `provenance capture|finalize|list` · `kb search|add-paper|promote|reindex` · `budget add|show|check` · `trace` · `run`
+`setup` · `deps` · `init` · `doctor [--skills] [--live]` · `aris-route` · `status` · `device` · `provenance capture|finalize|list` · `kb search|add-paper|promote|reindex` · `budget add|show|check` · `trace` · `run`
 
 ## 8. Cross-platform notes
 
 - All runtime and hook logic is Python stdlib (≥ 3.11) using `pathlib`. Hooks start through `bash hooks/run.sh`, which finds `python3`, `python` or `py`. Set `TUTU_PYTHON` to force a specific interpreter.
 - Some ARIS skills call `python3` directly. On Windows, make sure `python3` resolves (App Execution Alias or an alias in Git Bash).
+- Use `tutu-py` (the Tutu venv) for ARIS helpers and analysis/figure scripts. Experiment code keeps using the project env, and `tutu provenance` records that env, not the Tutu venv.
 - `aris:experiment-queue` (SSH + screen) is Linux-only. On Windows, the experiment agent uses `aris:run-experiment` locally.
 - CI runs the test suite on `ubuntu-latest` and `windows-latest`.
 

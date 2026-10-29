@@ -4,4 +4,4 @@ Everything here is Python stdlib only so it behaves the same on Linux and Window
 and can run from Claude Code hooks without a virtualenv.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
