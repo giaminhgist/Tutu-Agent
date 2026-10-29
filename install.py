@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Install Tutu Agent for the current user (Linux, macOS, Windows).
 
-    git clone https://github.com/<you>/Tutu-Agent && cd Tutu-Agent
+    git clone https://github.com/giaminhgist/Tutu-Agent && cd Tutu-Agent
     python install.py                      # use this checkout as the marketplace (git pull = update)
-    python install.py --github <you>/Tutu-Agent   # or install from GitHub without a checkout
+    python install.py --github giaminhgist/Tutu-Agent   # or install from GitHub without a checkout
     python install.py --reviewer codex     # cross-model reviewer (needs Codex CLI, then /aris:setup)
 
 Idempotent: re-running only fills in what is missing.

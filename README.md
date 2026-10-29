@@ -13,7 +13,7 @@ Built for AI research in eye tracking, medical imaging, dementia diagnosis, comp
 Requirements: [Claude Code](https://code.claude.com/docs), Python ≥ 3.11, and git. On Windows, Claude Code uses Git Bash.
 
 ```bash
-git clone https://github.com/<you>/Tutu-Agent.git
+git clone https://github.com/giaminhgist/Tutu-Agent.git
 cd Tutu-Agent
 python install.py                # Windows: py -3 install.py
 ```
@@ -30,7 +30,7 @@ To update later, run `git pull`. The plugin is read in place from the checkout.
 
 Manual alternative (inside Claude Code):
 ```
-/plugin marketplace add <you>/Tutu-Agent
+/plugin marketplace add giaminhgist/Tutu-Agent
 /plugin install tutu@tutu        # dependencies superpowers, aris, humanizer, supervisor-skills come along
 ```
 Then run `tutu setup` once in Claude Code's Bash, or `python -m tutu_runtime setup` with `PYTHONPATH=runtime`.
