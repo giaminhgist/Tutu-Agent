@@ -5,6 +5,7 @@
     python install.py                      # use this checkout as the marketplace (git pull = update)
     python install.py --github giaminhgist/Tutu-Agent   # or install from GitHub without a checkout
     python install.py --reviewer codex     # cross-model reviewer (needs Codex CLI, then /aris:setup)
+    python install.py --with-latex --with-drawio --extras deepxiv-sdk exa-py wandb   # everything
 
 Idempotent: re-running only fills in what is missing.
 """
@@ -39,6 +40,9 @@ def main() -> int:
     ap.add_argument("--github", help="owner/repo of Tutu-Agent; default: this checkout")
     ap.add_argument("--reviewer", choices=["claude", "codex"], help="reviewer backend (default: claude)")
     ap.add_argument("--scope", default="user", choices=["user", "project", "local"])
+    ap.add_argument("--with-latex", action="store_true", help="install LaTeX (TeX Live / MiKTeX / MacTeX)")
+    ap.add_argument("--with-drawio", action="store_true", help="install draw.io desktop (+ xvfb on Linux)")
+    ap.add_argument("--extras", nargs="*", default=[], help="extra pip packages for the Tutu venv")
     a = ap.parse_args()
 
     if sys.version_info < (3, 11):
@@ -66,8 +70,13 @@ def main() -> int:
     setup = [sys.executable, "-m", "tutu_runtime", "setup"] + (["--reviewer", a.reviewer] if a.reviewer else [])
     print("$", " ".join(setup))
     subprocess.run(setup, env=env, check=False)
+    deps = [sys.executable, "-m", "tutu_runtime", "deps", "--extras", *a.extras]
+    deps += ["--with-latex"] if a.with_latex else []
+    deps += ["--with-drawio"] if a.with_drawio else []
+    print("$", " ".join(deps))
+    subprocess.run(deps, env=env, check=False)
     print("\n== doctor ==")
-    subprocess.run([sys.executable, "-m", "tutu_runtime", "doctor"], env=env, check=False)
+    subprocess.run([sys.executable, "-m", "tutu_runtime", "doctor", "--skills"], env=env, check=False)
 
     print("""
 Done. Next:

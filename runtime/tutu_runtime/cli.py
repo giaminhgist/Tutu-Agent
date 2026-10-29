@@ -39,6 +39,17 @@ def main(argv: list[str] | None = None) -> int:
 
     s = sub.add_parser("doctor", help="check installation")
     s.add_argument("--project", default=".")
+    s.add_argument("--skills", action="store_true", help="also verify the orchestrated skill repos and their dependencies")
+    s.add_argument("--live", action="store_true", help="with --skills: live round-trip through the claude-review reviewer")
+
+    s = sub.add_parser("deps", help="install skill dependencies (Tutu venv, optional LaTeX / draw.io)")
+    s.add_argument("--extras", nargs="*", default=[], help="extra pip packages, e.g. deepxiv-sdk exa-py wandb")
+    s.add_argument("--with-latex", action="store_true")
+    s.add_argument("--with-drawio", action="store_true")
+
+    s = sub.add_parser("aris-route", help="resolve the ARIS reviewer route for this project")
+    s.add_argument("--project", default=".")
+    s.add_argument("--tier", choices=["deep", "regular"], default="deep")
 
     s = sub.add_parser("status", help="plans, runs, approvals, budget for this project")
     s.add_argument("--project", default=".")
@@ -129,7 +140,31 @@ def main(argv: list[str] | None = None) -> int:
         for name, ok, info in setup_mod.doctor(_root(a, required=False)):
             print(f"[{'ok' if ok else '!!'}] {name}: {info}")
             bad += not ok
+        if a.skills:
+            from . import skills_check
+            print("\n== skills ==")
+            for group, item, status, detail in skills_check.run(live=a.live):
+                print(f"[{status:8}] {group:8} {item}: {detail}")
+                bad += status == "MISSING"
         return 1 if bad else 0
+    elif a.command == "deps":
+        from . import sysdeps
+        sysdeps.create_venv(a.extras)
+        if a.with_latex:
+            sysdeps.install_latex()
+        if a.with_drawio:
+            sysdeps.install_drawio()
+    elif a.command == "aris-route":
+        import subprocess
+        from .skills_check import aris_repo
+        repo = aris_repo()
+        if not repo:
+            sys.exit("ARIS repo not resolved (~/.aris/repo); run `tutu setup`.")
+        root = _root(a, required=False) or Path(a.project).resolve()
+        r = subprocess.run([sys.executable, str(repo / "tools" / "reviewer_route.py"), "--project", str(root),
+                            "--host", "claude-code", "--tier", a.tier], capture_output=True, text=True)
+        print(r.stdout.strip() or r.stderr.strip())
+        return r.returncode
     elif a.command == "device":
         _print(device.detect(config_mod.get(config_mod.load(_root(a, required=False)), "compute.device", "auto")))
     elif a.command == "status":

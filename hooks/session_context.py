@@ -3,6 +3,7 @@
 from _bootstrap import emit, read_event
 
 from tutu_runtime import budget, config, provenance
+from tutu_runtime.setup import sync_aris_reviewer
 from tutu_runtime.paths import find_project_root, project_dir
 
 
@@ -11,6 +12,7 @@ def main() -> None:
     root = find_project_root(ev.get("cwd"))
     if root is None:
         return
+    sync_aris_reviewer(root, log=lambda *_: None)
     cfg = config.load(root)
     pdir = project_dir(root)
     plans = sorted((pdir / "plans").glob("*.md"))

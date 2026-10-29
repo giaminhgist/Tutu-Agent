@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Python of the Tutu venv (~/.tutu/venv): numpy, scipy, pandas, matplotlib, seaborn, Pillow,
+# python-pptx, pypdf, requests, pyyaml (+ extras). Use it for ARIS helper scripts and for
+# analysis/figure scripts. Experiment code should keep using the project's own environment.
+home="${TUTU_HOME:-$HOME/.tutu}"
+for py in "$home/venv/bin/python" "$home/venv/Scripts/python.exe"; do
+  [ -x "$py" ] && exec "$py" "$@"
+done
+echo "tutu-py: Tutu venv not found at $home/venv. Run: tutu deps (or python install.py)" >&2
+exit 127

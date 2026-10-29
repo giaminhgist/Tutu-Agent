@@ -2,7 +2,8 @@
 # `tutu` command for the Bash tool (plugin bin/ is on PATH while Tutu is enabled).
 # Works in Linux bash and in Git Bash on Windows.
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-for py in "${TUTU_PYTHON:-}" python3 python py; do
+home="${TUTU_HOME:-$HOME/.tutu}"
+for py in "${TUTU_PYTHON:-}" "$home/venv/bin/python" "$home/venv/Scripts/python.exe" python3 python py; do
   [ -n "$py" ] || continue
   command -v "$py" >/dev/null 2>&1 || continue
   if "$py" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' >/dev/null 2>&1; then

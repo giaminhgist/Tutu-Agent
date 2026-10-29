@@ -1,0 +1,14 @@
+# Python libraries used by the orchestrated skills (installed into ~/.tutu/venv, exposed as `tutu-py`).
+# ARIS helpers (tools/*.py): requests, pyyaml
+requests>=2.31
+pyyaml>=6.0
+# analysis / statistics / figures (aris:analyze-results, aris:paper-figure, supervisor-skills:figure-designer)
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+matplotlib>=3.8
+seaborn>=0.13
+# images (supervisor-skills:drawio-reconstruction crop_assist.py), slides (aris:paper-slides), PDFs
+Pillow>=10.0
+python-pptx>=0.6.23
+pypdf>=4.0

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -51,7 +52,6 @@ def setup_machine(reviewer_backend: str | None = None, log=print) -> None:
         log(f"created {cfg_path}")
     if reviewer_backend:
         text = cfg_path.read_text(encoding="utf-8")
-        import re
         text = re.sub(r'(?m)^backend\s*=\s*"[^"]*"', f'backend = "{reviewer_backend}"', text, count=1)
         cfg_path.write_text(text, encoding="utf-8")
 
@@ -91,14 +91,9 @@ def init_project(root: Path, name: str | None = None, log=print) -> Path:
     if not gi.exists():
         gi.write_text("kb.sqlite\napprovals/*.approved\n", encoding="utf-8")
 
-    # ARIS reviewer route for this project (see aris shared-references/reviewer-backends.md).
-    backend = config_mod.get(config_mod.load(root), "reviewer.backend", "claude")
-    aris_cfg = root / ".aris" / "reviewer.json"
-    if not aris_cfg.exists():
-        aris_cfg.parent.mkdir(exist_ok=True)
-        aris_cfg.write_text(json.dumps({"backend": "claude-code" if backend == "claude" else "codex"}) + "\n",
-                            encoding="utf-8")
-        log(f"created {aris_cfg} (reviewer backend: {backend})")
+    sync_aris_reviewer(root, log)
+
+    _ensure_aris_env_section(root, log)
 
     wiki = root / "research-wiki"
     helper = _aris_wiki_helper()
@@ -108,6 +103,46 @@ def init_project(root: Path, name: str | None = None, log=print) -> Path:
         for d in ("papers", "ideas", "experiments", "claims", "graph"):
             (wiki / d).mkdir(parents=True, exist_ok=True)
     return pdir
+
+
+def sync_aris_reviewer(root: Path, log=print) -> None:
+    """Keep <project>/.aris/reviewer.json in line with Tutu's reviewer.backend.
+
+    ARIS only reads the project file; without it every ARIS review step defaults to Codex.
+    """
+    backend = config_mod.get(config_mod.load(root), "reviewer.backend", "claude")
+    want = "claude-code" if backend == "claude" else "codex"
+    aris_cfg = root / ".aris" / "reviewer.json"
+    current = {}
+    if aris_cfg.exists():
+        try:
+            current = json.loads(aris_cfg.read_text(encoding="utf-8"))
+        except ValueError:
+            current = {}
+    if current.get("backend") == want:
+        return
+    aris_cfg.parent.mkdir(exist_ok=True)
+    aris_cfg.write_text(json.dumps({**current, "backend": want}) + "\n", encoding="utf-8")
+    log(f"{aris_cfg}: reviewer backend -> {want}")
+
+
+ARIS_ENV_SECTION = """
+## Local Environment
+<!-- read by ARIS run-experiment / experiment-bridge; added by `tutu init` -->
+- gpu: local                 # local CUDA/MPS if present, otherwise CPU (pilot-sized configs)
+- python: python3            # interpreter of the experiment environment (conda/venv)
+"""
+
+
+def _ensure_aris_env_section(root: Path, log=print) -> None:
+    """ARIS experiment skills read `gpu: local|remote|vast|modal` from the project CLAUDE.md."""
+    md = root / "CLAUDE.md"
+    text = md.read_text(encoding="utf-8") if md.exists() else ""
+    if re.search(r"(?m)^##\s+(Local Environment|Remote Server|Vast\.ai|Modal)\b|^-\s*gpu:", text):
+        return
+    with md.open("a", encoding="utf-8") as f:
+        f.write(ARIS_ENV_SECTION)
+    log(f"added '## Local Environment' (gpu: local) to {md}")
 
 
 def _aris_wiki_helper() -> Path | None:

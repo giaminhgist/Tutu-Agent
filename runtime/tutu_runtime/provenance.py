@@ -92,10 +92,27 @@ def git_state(root: Path, run_dir: Path) -> dict:
     return state
 
 
-def environment() -> dict:
+def target_python(python: str | None = None) -> str:
+    """Interpreter of the EXPERIMENT environment: explicit --python, else the python on PATH
+    (active conda/venv), never Tutu's own venv."""
+    if python:
+        return python
+    from .sysdeps import venv_dir
+    tutu_venv = os.path.normcase(str(venv_dir().resolve())) + os.sep
+    for name in ("python3", "python"):
+        exe = shutil.which(name)
+        if exe and not os.path.normcase(str(Path(exe).absolute())).startswith(tutu_venv):
+            return exe
+    return sys.executable
+
+
+def environment(python: str | None = None) -> dict:
+    exe = target_python(python)
+    out = _run([exe, "-c", "import sys,platform;print(sys.version.split()[0]);print(sys.executable)"], Path.cwd()) or ""
+    ver, real = (out.splitlines() + ["", ""])[:2]
     env = {
-        "python": sys.version.split()[0],
-        "executable": sys.executable,
+        "python": ver or sys.version.split()[0],
+        "executable": real or exe,
         "platform": platform.platform(),
         "os": platform.system(),
         "machine": platform.machine(),
@@ -107,7 +124,7 @@ def environment() -> dict:
 
 
 def pip_freeze(python: str | None = None) -> str:
-    exe = python or sys.executable
+    exe = target_python(python)
     try:
         out = subprocess.run([exe, "-m", "pip", "freeze", "--all"], capture_output=True, text=True, timeout=120)
         return out.stdout if out.returncode == 0 else ""
@@ -164,7 +181,7 @@ def capture(
         "configs": cfg_entries,
         "data": [path_digest((project_root / d).resolve(), project_root) for d in data],
         "dvc": _dvc_state(project_root),
-        "environment": {**environment(), "pip_freeze_file": "requirements.lock.txt",
+        "environment": {**environment(python), "pip_freeze_file": "requirements.lock.txt",
                         "pip_freeze_sha256": hashlib.sha256(freeze.encode()).hexdigest()},
         "device": device_mod.detect(device_pref),
         "results": [],

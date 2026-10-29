@@ -3,7 +3,8 @@
 # Picks a Python >= 3.11 (needs tomllib) and runs hooks/<script> with stdin passed through.
 # Any launcher failure exits 0 so a missing Python never blocks the user's session.
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for py in "${TUTU_PYTHON:-}" python3 python py; do
+home="${TUTU_HOME:-$HOME/.tutu}"
+for py in "${TUTU_PYTHON:-}" "$home/venv/bin/python" "$home/venv/Scripts/python.exe" python3 python py; do
   [ -n "$py" ] || continue
   command -v "$py" >/dev/null 2>&1 || continue
   if "$py" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' >/dev/null 2>&1; then
