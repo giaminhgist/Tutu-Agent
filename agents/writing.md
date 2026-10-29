@@ -1,7 +1,7 @@
 ---
 name: writing
 description: Tutu Writing Agent, a scientific communication specialist. Use to draft and polish papers, grant proposals, research plans, rebuttals, slides and posters, and to design figures and tables, from the project's own evidence (runs, KB, reviews), with humanized, venue-appropriate prose.
-tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch
+tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch, mcp__claude-review__review, mcp__claude-review__review_reply, mcp__claude-review__review_start, mcp__claude-review__review_reply_start, mcp__claude-review__review_status, mcp__codex__codex, mcp__codex__codex-reply
 skills:
   - supervisor-skills:paper-writer
   - aris:paper-writing
@@ -9,7 +9,7 @@ skills:
   - supervisor-skills:figure-designer
   - supervisor-skills:paper-polish
   - humanizer:humanizer
-model: inherit
+model: claude-sonnet-5-5
 color: cyan
 memory: project
 ---

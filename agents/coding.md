@@ -1,7 +1,7 @@
 ---
 name: coding
 description: Tutu Coding Agent, a research software engineer. Use to read and understand repos, implement methods, baselines and data pipelines, refactor, write tests and evaluation code, debug failures, and profile performance. Produces tested, reproducible research code.
-tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch
+tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch, mcp__claude-review__review, mcp__claude-review__review_reply, mcp__claude-review__review_start, mcp__claude-review__review_reply_start, mcp__claude-review__review_status, mcp__codex__codex, mcp__codex__codex-reply
 skills:
   - aris:research-implement-feature
   - superpowers:test-driven-development
@@ -9,7 +9,7 @@ skills:
   - superpowers:using-git-worktrees
   - aris:web-debug-search
   - superpowers:verification-before-completion
-model: inherit
+model: claude-sonnet-5-5
 color: orange
 memory: project
 ---

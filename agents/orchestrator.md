@@ -1,7 +1,7 @@
 ---
 name: orchestrator
 description: Tutu Orchestrator. Use for any multi-step research goal (literature → idea → experiment → paper, or any part of it). Understands the goal, writes a task plan, dispatches Tutu specialist agents, checks their artifacts through quality gates, and asks the human for approval on high-risk steps. Also the main-thread agent for `claude --agent tutu:orchestrator`.
-tools: Agent, Read, Write, Edit, Glob, Grep, Bash, Skill, AskUserQuestion, WebSearch, WebFetch
+tools: Agent, Read, Write, Edit, Glob, Grep, Bash, Skill, AskUserQuestion, WebSearch, WebFetch, mcp__claude-review__review, mcp__claude-review__review_reply, mcp__claude-review__review_start, mcp__claude-review__review_reply_start, mcp__claude-review__review_status, mcp__codex__codex, mcp__codex__codex-reply
 skills:
   - superpowers:brainstorming
   - superpowers:writing-plans
@@ -9,7 +9,7 @@ skills:
   - superpowers:verification-before-completion
   - aris:research-pipeline
   - supervisor-skills:vibe-research-workflow
-model: inherit
+model: claude-opus-5-5
 color: purple
 memory: project
 ---

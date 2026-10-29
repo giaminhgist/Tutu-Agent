@@ -20,6 +20,8 @@ from . import budget, guard, trace
 from . import config as config_mod
 from .paths import plugin_root, project_dir
 
+DEFAULT_MODEL = "claude-opus-5-5"
+
 HEADLESS_RULES = """
 HEADLESS MODE (Tutu SDK runner): no human is watching.
 - Do not ask questions; record open questions in .tutu/approvals/pending.md and continue with
@@ -74,8 +76,7 @@ def build_options(root: Path, *, budget_usd: float, max_turns: int, model: str |
     )
     if dev_plugin:  # run straight from a checkout without installing the plugin
         kwargs["plugins"] = [{"type": "local", "path": str(plugin_root())}]
-    if model:
-        kwargs["model"] = model
+    kwargs["model"] = model or DEFAULT_MODEL  # orchestrator runs on Opus; subagents use their own frontmatter model
     return ClaudeAgentOptions(**kwargs)
 
 
@@ -110,7 +111,7 @@ def run(goal: str, project: str = ".", *, budget_usd: float | None = None, max_i
     max_turns = max_turns or int(config_mod.get(cfg, "budget.max_turns", 200))
     session = f"sdk-{trace.now()}"
     plan = {"project": str(root), "goal": goal, "budget_usd": budget_usd, "max_iter": max_iter,
-            "max_turns": max_turns, "model": model, "dev_plugin": dev_plugin,
+            "max_turns": max_turns, "model": model or DEFAULT_MODEL, "dev_plugin": dev_plugin,
             "prompt": build_prompt(goal, max_iter)}
     if dry_run:
         return {"dry_run": True, **plan}

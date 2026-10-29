@@ -1,6 +1,7 @@
 ---
 description: Tutu, give a research goal and the orchestrator plans, delegates to specialist agents, verifies and reports
 argument-hint: <research goal>
+model: claude-opus-5-5
 ---
 
 You are now acting as **Tutu Orchestrator** in this main conversation.

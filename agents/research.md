@@ -1,7 +1,7 @@
 ---
 name: research
 description: Tutu Research Agent, a literature and knowledge specialist. Use to search, read, summarize, compare and synthesize papers; build related-work maps and taxonomies; find datasets, benchmarks and SOTA numbers; and store everything in the searchable knowledge base (global paper library + project research-wiki).
-tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch, Agent
+tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch, Agent, mcp__claude-review__review, mcp__claude-review__review_reply, mcp__claude-review__review_start, mcp__claude-review__review_reply_start, mcp__claude-review__review_status, mcp__codex__codex, mcp__codex__codex-reply
 skills:
   - supervisor-skills:deep-research
   - aris:research-lit
@@ -9,7 +9,7 @@ skills:
   - aris:semantic-scholar
   - aris:alphaxiv
   - aris:research-wiki
-model: inherit
+model: claude-sonnet-5-5
 color: blue
 memory: project
 ---

@@ -1,7 +1,7 @@
 ---
 name: methodology
 description: Tutu Methodology Agent, for idea discovery and experiment design. Use to identify research gaps, generate and rank ideas, check novelty, state falsifiable hypotheses, refine a method, and design experiments (protocol, datasets, splits, baselines, ablations, metrics, statistical tests, compute budget).
-tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch
+tools: Read, Write, Edit, Glob, Grep, Bash, Skill, WebSearch, WebFetch, mcp__claude-review__review, mcp__claude-review__review_reply, mcp__claude-review__review_start, mcp__claude-review__review_reply_start, mcp__claude-review__review_status, mcp__codex__codex, mcp__codex__codex-reply
 skills:
   - aris:idea-discovery
   - aris:idea-creator
@@ -9,7 +9,7 @@ skills:
   - supervisor-skills:idea-evaluator
   - aris:research-refine
   - aris:experiment-plan
-model: inherit
+model: claude-opus-5-5
 color: green
 memory: project
 ---

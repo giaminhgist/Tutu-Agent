@@ -35,6 +35,9 @@ def test_agent_matches_map(path):
     fm = frontmatter(path)
     assert fm["name"] == path.stem
     assert fm["skills"] == SKILL_MAP[path.stem]["preload"]
+    assert fm["model"] == SKILL_MAP[path.stem]["model"]
+    tools = [t.strip() for t in fm["tools"].split(",")]
+    assert "mcp__claude-review__review" in tools and "mcp__codex__codex" in tools, "external reviewer tools"
     assert 5 <= len(fm["skills"]) <= 8
     assert "Skill" in fm["tools"], "agents must be able to borrow skills"
     assert "${CLAUDE_PLUGIN_ROOT}/config/protocol.md" in path.read_text()
@@ -64,3 +67,11 @@ def test_mapped_skills_exist_when_installed():
         pytest.skip("skill plugins not installed on this machine")
     wanted = {s for a in SKILL_MAP.values() for s in a["preload"] + a["borrow"]}
     assert sorted(wanted - installed) == []
+
+
+def test_model_assignment():
+    opus = {a for a, v in SKILL_MAP.items() if v["model"] == "claude-opus-5-5"}
+    sonnet = {a for a, v in SKILL_MAP.items() if v["model"] == "claude-sonnet-5-5"}
+    assert opus == {"orchestrator", "methodology", "experiment", "reviewer"}
+    assert sonnet == {"research", "coding", "writing"}
+    assert "model: claude-opus-5-5" in (REPO / "commands" / "tutu.md").read_text()
